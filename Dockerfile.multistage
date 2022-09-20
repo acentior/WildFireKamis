@@ -1,0 +1,32 @@
+##
+## Build
+##
+
+FROM golang:1.18-buster AS build
+
+WORKDIR /app
+
+COPY go.mod .
+COPY go.sum .
+ENV WEB_ENV=${WEB_ENV:-"dev"}
+RUN go mod download
+
+COPY . .
+
+RUN go build -o /wildfiretest
+
+##
+## Deploy
+##
+
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /wildfiretest /wildfiretest
+
+EXPOSE 5000
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/wildfiretest"]

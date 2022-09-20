@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  docker-gs-ping-roach:
+    build:
+      context: .
+    container_name: wildfiretest
+    hostname: wildfiretest
+    ports:
+      - 8080:5000
+    environment:
+      - WEB_ENV=${WEB_ENV:-"dev"}
+    deploy:
+      restart_policy:
+        condition: on-failure
